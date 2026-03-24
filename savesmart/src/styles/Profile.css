@@ -1,0 +1,293 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #0b1120;
+  color: white;
+}
+
+.profile-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR (NO TOCAR) */
+.sidebar {
+  width: 260px;
+  background: #0f172a;
+  padding: 30px 20px;
+}
+
+.sidebar-header h2 {
+  color: #38bdf8;
+}
+
+.sidebar-header p {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-bottom: 30px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.menu li:hover,
+.menu .active {
+  background: linear-gradient(90deg, #06b6d4, #9333ea);
+  opacity: 1;
+}
+
+.notif-badge {
+  margin-left: auto;
+  background: #10b981;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* CONTENT */
+.profile-content {
+  flex: 1;
+  padding: 40px;
+}
+
+/* TITULOS */
+.page-title {
+  font-size: 28px;
+  color: #38bdf8;
+}
+
+.page-subtitle {
+  opacity: 0.6;
+  margin-bottom: 30px;
+}
+
+/* GRID (izquierda intacta, derecha flexible) */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 25px;
+}
+
+/* 🔥 SOLO DERECHA SE MODIFICA */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* CARDS */
+.card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 10px; /* 🔥 menos espacio */
+}
+
+/* USER (SIN CAMBIOS) */
+.avatar-container {
+  position: relative;
+  text-align: center;
+}
+
+.avatar-container img {
+  width: 110px;
+  border-radius: 50%;
+}
+
+.camera-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 90px;
+  background: #06b6d4;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.verified {
+  display: inline-block;
+  margin-top: 8px;
+  color: #10b981;
+  font-size: 13px;
+}
+
+/* STATS (SIN CAMBIOS) */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.highlight {
+  color: #38bdf8;
+}
+
+.money {
+  color: #10b981;
+}
+
+/* 🔥 FORM MÁS ANCHO */
+.form-card {
+  width: 100%;
+  max-width: none;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #0f172a;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.input-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  margin-left: 8px;
+}
+
+.save-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(90deg, #06b6d4, #9333ea);
+  color: white;
+  cursor: pointer;
+}
+
+/* 🔥 GOALS BAJA Y LLENA */
+.goals-card {
+  flex: 1;
+}
+
+/* GOALS */
+.goals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-goal {
+  background: #7c3aed;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+.goal-item {
+  margin-top: 20px;
+}
+
+.goal-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.goal-percent {
+  color: #38bdf8;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #334155;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #9333ea, #06b6d4);
+}
+
+.goal-days {
+  font-size: 12px;
+  opacity: 0.6;
+}
+.profile-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tab {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #1f1f2e;
+  color: #ccc;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.tab:hover {
+  background: #2a2a3d;
+}
+
+.tab.active {
+  background: #6366f1;
+  color: white;
+}
+
+.transactions-card {
+  padding: 20px;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #2a2a3d;
+}
+
+.positive {
+  color: #22c55e;
+}
+
+.negative {
+  color: #ef4444;
+}
+.subprofile-switch {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.subprofile-switch button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #1f1f2e;
+  color: #ccc;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.subprofile-switch button.active {
+  background: #6366f1;
+  color: white;
+}
