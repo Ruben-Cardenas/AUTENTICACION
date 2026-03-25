@@ -11,7 +11,8 @@ import {
   ArrowLeftRight,
   Brain,
   Bell,
-  LogOut
+  LogOut,
+  ChevronDown // 🔥 CAMBIO: icono para dropdown
 } from "lucide-react";
 
 interface UserData {
@@ -25,6 +26,13 @@ const Profile = () => {
 
   // 🔥 SUBPERFILES
   const [activeSubProfile, setActiveSubProfile] = useState<"perfil" | "transacciones">("perfil");
+
+  // 🔥 CAMBIO: control de dropdowns
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  const toggleMenu = (menu: string) => {
+    setOpenMenu(openMenu === menu ? null : menu);
+  };
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -54,17 +62,63 @@ const Profile = () => {
         </div>
 
         <ul className="menu">
-          <li><LayoutDashboard size={18} /> Dashboard</li>
+
+          {/* 🔥 DASHBOARD CON SUBMENÚ */}
+          <li onClick={() => toggleMenu("dashboard")} className="menu-item">
+            <div className="menu-title">
+              <LayoutDashboard size={18} />
+              Dashboard
+              <ChevronDown
+                size={16}
+                className={openMenu === "dashboard" ? "rotate" : ""}
+              />
+            </div>
+
+            {openMenu === "dashboard" && (
+              <ul className="submenu">
+                <li>Resumen</li>
+                <li>Ingresos</li>
+              </ul>
+            )}
+          </li>
+
           <li><ArrowLeftRight size={18} /> Transacciones</li>
           <li><Brain size={18} /> Análisis IA</li>
-          <li className="active"><User size={18} /> Perfil</li>
+
+          {/* 🔥 PERFIL CON SUBMENÚ */}
+          <li className="menu-item active" onClick={() => toggleMenu("perfil")}>
+            <div className="menu-title">
+              <User size={18} />
+              Perfil
+              <ChevronDown
+                size={16}
+                className={openMenu === "perfil" ? "rotate" : ""}
+              />
+            </div>
+
+            {openMenu === "perfil" && (
+              <ul className="submenu">
+                <li onClick={() => setActiveSubProfile("perfil")}>
+                  Datos del Perfil
+                </li>
+                <li onClick={() => setActiveSubProfile("transacciones")}>
+                  Transacciones
+                </li>
+              </ul>
+            )}
+          </li>
+
           <li>
             <Bell size={18} />
             Notificaciones
             <span className="notif-badge">3</span>
           </li>
 
-          <li onClick={handleLogout} className="logout-item" style={{ cursor: 'pointer', marginTop: 'auto', color: '#ff4d4d' }}>
+          <li
+            onClick={handleLogout}
+            className="logout-item"
+            style={{ cursor: 'pointer', marginTop: 'auto', color: '#ff4d4d' }}
+          >
             <LogOut size={18} /> Cerrar Sesión
           </li>
         </ul>
@@ -78,29 +132,11 @@ const Profile = () => {
           Gestiona tu información personal y preferencias
         </p>
 
-        {/* 🔥 BOTONES SUBPERFIL */}
-        <div className="subprofile-switch">
-          <button
-            className={activeSubProfile === "perfil" ? "active" : ""}
-            onClick={() => setActiveSubProfile("perfil")}
-          >
-            Datos del Perfil
-          </button>
-
-          <button
-            className={activeSubProfile === "transacciones" ? "active" : ""}
-            onClick={() => setActiveSubProfile("transacciones")}
-          >
-            Transacciones
-          </button>
-        </div>
-
         <div className="profile-grid">
 
           {/* 🔴 PERFIL */}
           {activeSubProfile === "perfil" && (
             <>
-              {/* IZQUIERDA */}
               <div className="left-column">
                 <div className="card user-card">
                   <div className="avatar-container">
@@ -119,7 +155,6 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* DERECHA */}
               <div className="right-column">
                 <div className="card form-card">
                   <h3>Información Personal</h3>
@@ -159,7 +194,6 @@ const Profile = () => {
           {/* 🟢 TRANSACCIONES */}
           {activeSubProfile === "transacciones" && (
             <>
-              {/* IZQUIERDA */}
               <div className="left-column">
                 <div className="card stats-card">
                   <h3>Estadísticas Rápidas</h3>
@@ -167,18 +201,9 @@ const Profile = () => {
                     <span>Días en SaveSmart</span>
                     <span className="highlight">1</span>
                   </div>
-                  <div className="stat-row">
-                    <span>Total Ahorrado</span>
-                    <span className="money">$0.00</span>
-                  </div>
-                  <div className="stat-row">
-                    <span>Metas Completadas</span>
-                    <span className="highlight">0</span>
-                  </div>
                 </div>
               </div>
 
-              {/* DERECHA */}
               <div className="right-column">
                 <div className="card goals-card">
                   <div className="goals-header">
@@ -187,13 +212,6 @@ const Profile = () => {
                       <Plus size={14} /> Nueva Meta
                     </button>
                   </div>
-
-                  <Goal
-                    title="Fondo inicial"
-                    amount="$0 / $1,000"
-                    progress={0}
-                    days="Recién comenzando"
-                  />
                 </div>
               </div>
             </>
@@ -204,33 +222,5 @@ const Profile = () => {
     </div>
   );
 };
-
-type GoalProps = {
-  title: string;
-  amount: string;
-  progress: number;
-  days: string;
-};
-
-const Goal: React.FC<GoalProps> = ({ title, amount, progress, days }) => (
-  <div className="goal-item">
-    <div className="goal-top">
-      <div>
-        <h4>{title}</h4>
-        <p>{amount}</p>
-      </div>
-      <span className="goal-percent">{progress}%</span>
-    </div>
-
-    <div className="progress-bar">
-      <div
-        className="progress-fill"
-        style={{ width: `${progress}%` }}
-      ></div>
-    </div>
-
-    <p className="goal-days">{days}</p>
-  </div>
-);
 
 export default Profile;
