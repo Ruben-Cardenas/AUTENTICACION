@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, TrendingUp } from "lucide-react";
 import api from "../services/api";// IMPORTANTE: Asegúrate de tener este archivo
 import "../styles/Login.css";
-
+ 
 type LoginFormData = {
   email: string;
   password: string;
