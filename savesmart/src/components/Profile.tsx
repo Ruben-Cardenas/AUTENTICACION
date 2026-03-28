@@ -1,48 +1,107 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 import "../styles/Profile.css";
+
 import {
   User,
   Mail,
   Lock,
-  Camera,
-  Plus,
   LayoutDashboard,
   ArrowLeftRight,
   Brain,
   Bell,
   LogOut,
-  ChevronDown // 🔥 CAMBIO: icono para dropdown
+  ChevronDown,
+  Plus
 } from "lucide-react";
 
 interface UserData {
+  id: number;
   name: string;
   email: string;
 }
 
 const Profile = () => {
   const navigate = useNavigate();
+
   const [user, setUser] = useState<UserData | null>(null);
 
-  // 🔥 SUBPERFILES
-  const [activeSubProfile, setActiveSubProfile] = useState<"perfil" | "transacciones">("perfil");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
 
-  // 🔥 CAMBIO: control de dropdowns
+  // 🔥 SUBPERFILES
+  const [activeSubProfile, setActiveSubProfile] =
+    useState<"perfil" | "transacciones">("perfil");
+
+  // 🔥 TOAST
+  const [showToast, setShowToast] = useState(false);
+
+  // 🔥 MENÚ
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const toggleMenu = (menu: string) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
+  // 🔥 CARGAR USUARIO
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
 
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
+    if (!savedUser) {
       navigate("/login");
+      return;
     }
+
+    const parsedUser = JSON.parse(savedUser);
+    const userId = parsedUser.id;
+
+    api.get(`/profile/${userId}`)
+      .then(res => {
+        setUser(res.data);
+        setFormData({
+          name: res.data.name,
+          email: res.data.email,
+          password: ""
+        });
+      })
+      .catch(() => navigate("/login"));
+
   }, [navigate]);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // 🔥 GUARDAR
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      await api.put(`/profile/${user.id}`, formData);
+
+      localStorage.setItem("user", JSON.stringify({
+        ...user,
+        name: formData.name,
+        email: formData.email
+      }));
+
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -54,7 +113,15 @@ const Profile = () => {
   return (
     <div className="profile-wrapper">
 
-      {/* ===== SIDEBAR ===== */}
+      {/* 🔥 TOAST */}
+      {showToast && (
+        <div className="toast-success">
+          <strong>✔ Datos actualizados</strong>
+          <p>Tu perfil se guardó correctamente</p>
+        </div>
+      )}
+
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <h2>SaveSmart</h2>
@@ -63,7 +130,7 @@ const Profile = () => {
 
         <ul className="menu">
 
-          {/* 🔥 DASHBOARD CON SUBMENÚ */}
+          {/* DASHBOARD */}
           <li onClick={() => toggleMenu("dashboard")} className="menu-item">
             <div className="menu-title">
               <LayoutDashboard size={18} />
@@ -85,7 +152,7 @@ const Profile = () => {
           <li><ArrowLeftRight size={18} /> Transacciones</li>
           <li><Brain size={18} /> Análisis IA</li>
 
-          {/* 🔥 PERFIL CON SUBMENÚ */}
+          {/* PERFIL CON SUBMENU */}
           <li className="menu-item active" onClick={() => toggleMenu("perfil")}>
             <div className="menu-title">
               <User size={18} />
@@ -111,26 +178,18 @@ const Profile = () => {
           <li>
             <Bell size={18} />
             Notificaciones
-            <span className="notif-badge">3</span>
           </li>
 
-          <li
-            onClick={handleLogout}
-            className="logout-item"
-            style={{ cursor: 'pointer', marginTop: 'auto', color: '#ff4d4d' }}
-          >
+          <li onClick={handleLogout} className="logout-item">
             <LogOut size={18} /> Cerrar Sesión
           </li>
         </ul>
       </aside>
 
-      {/* ===== CONTENIDO ===== */}
+      {/* CONTENIDO */}
       <main className="profile-content">
 
         <h1 className="page-title">Perfil</h1>
-        <p className="page-subtitle">
-          Gestiona tu información personal y preferencias
-        </p>
 
         <div className="profile-grid">
 
@@ -141,17 +200,13 @@ const Profile = () => {
                 <div className="card user-card">
                   <div className="avatar-container">
                     <img
-                      src={`https://ui-avatars.com/api/?name=${user.name}&background=0D8ABC&color=fff`}
+                      src={`https://ui-avatars.com/api/?name=${formData.name}`}
                       alt="avatar"
                     />
-                    <div className="camera-icon">
-                      <Camera size={16} />
-                    </div>
                   </div>
 
-                  <h3>{user.name}</h3>
-                  <p>{user.email}</p>
-                  <span className="verified">Cuenta Verificada</span>
+                  <h3>{formData.name}</h3>
+                  <p>{formData.email}</p>
                 </div>
               </div>
 
@@ -160,30 +215,45 @@ const Profile = () => {
                   <h3>Información Personal</h3>
 
                   <div className="form-group">
-                    <label>Nombre Completo</label>
+                    <label>Nombre</label>
                     <div className="input-wrapper">
                       <User size={16} />
-                      <input defaultValue={user.name} />
+                      <input
+                        value={formData.name}
+                        onChange={(e) =>
+                          handleChange("name", e.target.value)
+                        }
+                      />
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label>Correo Electrónico</label>
+                    <label>Email</label>
                     <div className="input-wrapper">
                       <Mail size={16} />
-                      <input defaultValue={user.email} />
+                      <input
+                        value={formData.email}
+                        onChange={(e) =>
+                          handleChange("email", e.target.value)
+                        }
+                      />
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label>Cambiar Contraseña</label>
+                    <label>Nueva contraseña</label>
                     <div className="input-wrapper">
                       <Lock size={16} />
-                      <input type="password" placeholder="Nueva contraseña" />
+                      <input
+                        type="password"
+                        onChange={(e) =>
+                          handleChange("password", e.target.value)
+                        }
+                      />
                     </div>
                   </div>
 
-                  <button className="save-btn">
+                  <button className="save-btn" onClick={handleSave}>
                     Guardar Cambios
                   </button>
                 </div>
@@ -207,7 +277,7 @@ const Profile = () => {
               <div className="right-column">
                 <div className="card goals-card">
                   <div className="goals-header">
-                    <h3>Metas Personales de Ahorro</h3>
+                    <h3>Metas de Ahorro</h3>
                     <button className="new-goal">
                       <Plus size={14} /> Nueva Meta
                     </button>

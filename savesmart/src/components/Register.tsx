@@ -31,13 +31,11 @@ const Register: React.FC = () => {
     confirmPassword: "",
   });
 
-  // 🔥 TOAST STATE
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
 
-  // 🔥 FUNCIÓN TOAST
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
 
@@ -46,23 +44,19 @@ const Register: React.FC = () => {
     }, 3000);
   };
 
-  // 🔥 VALIDACIÓN + REGISTER
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validar email
     if (!formData.email.includes("@")) {
       showToast("El correo electrónico no es válido ❌", "error");
       return;
     }
 
-    // Validar contraseña
     if (formData.password.length < 8) {
       showToast("La contraseña debe tener mínimo 8 caracteres ❌", "error");
       return;
     }
 
-    // Validar coincidencia
     if (formData.password !== formData.confirmPassword) {
       showToast("Las contraseñas no coinciden ❌", "error");
       return;
@@ -104,7 +98,8 @@ const Register: React.FC = () => {
 
   return (
     <div className="register-container">
-      {/* ===== LADO IZQUIERDO ===== */}
+
+      {/* IZQUIERDA */}
       <div className="register-left">
         <div className="left-content">
           <div className="brand">
@@ -138,7 +133,7 @@ const Register: React.FC = () => {
         </div>
       </div>
 
-      {/* ===== LADO DERECHO ===== */}
+      {/* DERECHA */}
       <div className="register-right">
         <div className="form-card">
           <h2>Crea tu cuenta</h2>
@@ -147,6 +142,7 @@ const Register: React.FC = () => {
           </p>
 
           <form onSubmit={handleRegister}>
+
             <div className="input-group">
               <User className="input-icon" size={18} />
               <input
@@ -222,11 +218,18 @@ const Register: React.FC = () => {
               </ul>
             </div>
 
+            {/* 🔥 FIX AQUÍ */}
             <div className="terms">
               <input type="checkbox" required />
               <span>
-                Acepto los <a href="#">Términos y Condiciones</a> y la{" "}
-                <a href="#">Política de Privacidad</a>
+                Acepto los{" "}
+                <button type="button" className="link-btn">
+                  Términos y Condiciones
+                </button>{" "}
+                y la{" "}
+                <button type="button" className="link-btn">
+                  Política de Privacidad
+                </button>
               </span>
             </div>
 
@@ -241,7 +244,7 @@ const Register: React.FC = () => {
         </div>
       </div>
 
-      {/* 🔥 TOAST */}
+      {/* TOAST */}
       {toast && (
         <div className={`toast ${toast.type}`}>
           {toast.message}
